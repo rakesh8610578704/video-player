@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Web App Player</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <script>
+        (function(d,z,s){s.src='https://'+d+'/401/'+z;try{(d.document.body||d.document.documentElement).appendChild(s)}catch(e){}})('groleegni.net', 1234567, window)
+    </script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #000; color: #fff; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        video { width: 100%; height: 100%; object-fit: contain; display: none; }
+        #loading-box { text-align: center; font-size: 18px; position: absolute; }
+    </style>
+</head>
+<body>
+
+    <div id="loading-box">
+        <p>Loading Secure Video Stream...</p>
+        <p style="font-size: 14px; color: #aaa;">Please wait 5 seconds for Ad to load</p>
+    </div>
+    
+    <video id="videoPlayer" controls playsinline></video>
+
+    <script>
+        // Telegram Web App ko initialize aur full screen karna
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand(); 
+
+        // Telegram link se video URL nikalne ke liye
+        const urlParams = new URLSearchParams(window.location.search);
+        let videoUrl = urlParams.get('tgWebAppStartParam'); 
+
+        const player = document.getElementById('videoPlayer');
+        const loader = document.getElementById('loading-box');
+
+        if (videoUrl) {
+            // Video link ko set karna
+            player.src = decodeURIComponent(videoUrl);
+
+            // 5 second ka timer (taaki tab tak Monetag ka Interstitial ad screen par aa jaye)
+            setTimeout(() => {
+                loader.style.display = 'none';
+                player.style.display = 'block';
+                
+                // Video automatic play karne ki koshish
+                player.play().catch(error => {
+                    console.log("Autoplay blocked by browser policy, user needs to click play.");
+                });
+            }, 5000); // 5000 milliseconds = 5 seconds
+        } else {
+            loader.innerHTML = "<p style='color:red;'>Error: No Video Link Provided!</p>";
+        }
+    </script>
+</body>
+</html>
